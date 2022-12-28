@@ -1,23 +1,59 @@
 package groepswerk;
 
-import java.io.NotActiveException;
+import java.sql.*;
+
 import java.util.ArrayList;
 import java.util.Scanner;
-
-import javax.naming.NameNotFoundException;
 
 public class Try1 {
 	static Scanner scanner = new Scanner(System.in);
 	static ArrayList<Recipe> listRecipe =new ArrayList<>();
 	
 	public static void main(String[] args) {
+		
+		Connection conn = null;
+
+		try {
+		    // Laad de SQLite-JDBC-driver
+		    Class.forName("org.sqlite.JDBC");
+
+		    // Maak een verbinding met de database
+		    conn = DriverManager.getConnection("jdbc:sqlite:recipe.db");
+		    System.out.println("verbonden");
+		} catch (ClassNotFoundException | SQLException e) {
+		    System.out.println(e.getMessage());
+		}
+
+		//connect();
+
 
 	startCycle();	
 		
 	
 	}
 	
-		
+	/* public static void connect() {
+	        Connection conn = null;
+	        try {
+	            // db parameters
+	            String url = "jdbc:sqlite:Recipe.db";
+	            // create a connection to the database
+	            conn = DriverManager.getConnection(url);
+	            
+	            System.out.println("Connection to SQLite has been established.");
+	            
+	        } catch (SQLException e) {
+	            System.out.println(e.getMessage());
+	        } finally {
+	            try {
+	                if (conn != null) {
+	                    conn.close();
+	                }
+	            } catch (SQLException ex) {
+	                System.out.println(ex.getMessage());
+	            }
+	        }
+	    }	*/
 	
 	
 	
@@ -26,9 +62,9 @@ public class Try1 {
 
 
 	private static void startCycle() {
-		System.out.println("------------------------------------------------------");
-		System.out.println("Welkom! Wilt U een recept toevoegen of zoeken? T of Z ");
-		System.out.println("------------------------------------------------------");
+		System.out.println("---------------------------------------------------------");
+		System.out.println("  Welkom! Wilt U een recept toevoegen of zoeken? T of Z  ");
+		System.out.println("---------------------------------------------------------");
 		String input = scanner.nextLine();
 		if(input.equalsIgnoreCase("T")){
 			addRecipe();
