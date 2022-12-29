@@ -11,20 +11,9 @@ public class Try1 {
 	
 	public static void main(String[] args) {
 		
-		Connection conn = null;
+		
 
-		try {
-		    // Laad de SQLite-JDBC-driver
-		    Class.forName("org.sqlite.JDBC");
-
-		    // Maak een verbinding met de database
-		    conn = DriverManager.getConnection("jdbc:sqlite:recipe.db");
-		    System.out.println("verbonden");
-		} catch (ClassNotFoundException | SQLException e) {
-		    System.out.println(e.getMessage());
-		}
-
-		//connect();
+		connect();
 
 
 	startCycle();	
@@ -32,12 +21,12 @@ public class Try1 {
 	
 	}
 	
-	/* public static void connect() {
+	 public static void connect() {
 	        Connection conn = null;
 	        try {
-	            // db parameters
-	            String url = "jdbc:sqlite:Recipe.db";
-	            // create a connection to the database
+	            
+	            String url = "jdbc:sqlite:C:/Users/olivi/git/groepswerk1/Groepswerk/src/groepswerk/recipe.db";
+	         
 	            conn = DriverManager.getConnection(url);
 	            
 	            System.out.println("Connection to SQLite has been established.");
@@ -53,7 +42,7 @@ public class Try1 {
 	                System.out.println(ex.getMessage());
 	            }
 	        }
-	    }	*/
+	    }	
 	
 	
 	
