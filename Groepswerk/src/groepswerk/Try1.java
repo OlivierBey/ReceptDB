@@ -8,28 +8,57 @@ import java.util.Scanner;
 public class Try1 {
 	static Scanner scanner = new Scanner(System.in);
 	static ArrayList<Recipe> listRecipe =new ArrayList<>();
+	static boolean conestablish= false;
+	static boolean isTableMt= false;
+    static Connection conn = null;
+    static String url = "jdbc:sqlite:C:/Users/olivi/git/groepswerk1/Groepswerk/src/groepswerk/recipe.db";
+
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws SQLException {
 		
 		
+/*		if (conestablish= true) {
+			if(isTableMt = true) {
+				startCycle();	
+			} else {
+				createTable();
+			}
+		}
+			else {
+			connect();
+		}*/
 
-		connect();
+	connect();
+	createTable();
 
-
-	startCycle();	
-		
 	
 	}
 	
-	 public static void connect() {
-	        Connection conn = null;
+	 private static void createTable() throws SQLException {
+		 String sql = "CREATE TABLE IF NOT EXISTS recipes (\n"
+	                + "	id integer PRIMARY KEY,\n"
+	                + "	RecipeTitle text NOT NULL,\n"
+	                + "	veggie text,\n"
+	                + "	meatFish text,\n"
+	                + "	Sidedish text \n"
+	                + ");";
+		 
+		 try (Connection conn = DriverManager.getConnection(url);
+	                Statement stmt = conn.createStatement()) {
+	            // create a new table
+	            stmt.execute(sql);
+	        } catch (SQLException e) {
+	            System.out.println(e.getMessage());
+	        }
+	    }
+	
+
+	public static void connect() {
 	        try {
-	            
-	            String url = "jdbc:sqlite:C:/Users/olivi/git/groepswerk1/Groepswerk/src/groepswerk/recipe.db";
-	         
-	            conn = DriverManager.getConnection(url);
-	            
-	            System.out.println("Connection to SQLite has been established.");
+	          
+	          conn = DriverManager.getConnection(url);
+	          System.out.println("Connection to SQLite has been established.");
+	          conestablish= true;
 	            
 	        } catch (SQLException e) {
 	            System.out.println(e.getMessage());
