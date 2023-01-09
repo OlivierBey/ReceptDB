@@ -17,19 +17,10 @@ public class Try1 {
 	public static void main(String[] args) throws SQLException {
 		
 		
-/*		if (conestablish= true) {
-			if(isTableMt = true) {
-				startCycle();	
-			} else {
-				createTable();
-			}
-		}
-			else {
-			connect();
-		}*/
 
 	connect();
 	createTable();
+	startCycle();
 
 	
 	}
@@ -161,6 +152,16 @@ public class Try1 {
 		recept1.sideDish = vegetableMeatFishSidedish[2];
 		}
 		listRecipe.add(recept1);
+		Statement stmt= null;
+		String sqlstring1="INSERT INTO RECIPE(RECIPETITLE, VEGGIE, MEATFISH, SIDEDISH)";
+				String sqlstring2=("VALUES("+recept1.name+","+recept1.vegetables+","+recept1.meatFish+","+recept1.sideDish);
+		try {
+			stmt.executeUpdate(sqlstring1+sqlstring2);
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
+		
 		System.out.println("Bedankt, volgend recept is toegevoegd: " + 
 		recept1.name + " met "+ recept1.vegetables + " " + recept1.meatFish+" " + recept1.sideDish);
 		System.out.println();
