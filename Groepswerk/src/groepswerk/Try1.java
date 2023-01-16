@@ -29,8 +29,8 @@ public class Try1 {
 		 String sql = "CREATE TABLE IF NOT EXISTS recipes (\n"
 	                + "	id integer PRIMARY KEY,\n"
 	                + "	RecipeTitle text NOT NULL,\n"
-	                + "	veggie text,\n"
-	                + "	meatFish text,\n"
+	                + "	Veggie text,\n"
+	                + "	MeatFish text,\n"
 	                + "	Sidedish text \n"
 	                + ");";
 		 
@@ -134,6 +134,7 @@ public class Try1 {
 	}
 
 
+	
 	private static void addRecipe() {
 		System.out.println("Geef de naam van het recept in: ");
 		Recipe recept1 = new Recipe();
@@ -141,30 +142,64 @@ public class Try1 {
 		recept1.name = hulpString;
 		System.out.println("Welke ingredienten? (groenten vlees/vis bijgerecht)");
 		hulpString = scanner.nextLine();
-		String[] vegetableMeatFishSidedish= hulpString.split(" ");
-		if(vegetableMeatFishSidedish[0]!=null) {
+		
+		String[] vegetableMeatFishSidedish= new String[3];
+		vegetableMeatFishSidedish= hulpString.split(" ");
+		System.out.println(vegetableMeatFishSidedish.length);
+		if (vegetableMeatFishSidedish.length==3) {
+			recept1.sideDish = vegetableMeatFishSidedish[2];
 			recept1.vegetables= vegetableMeatFishSidedish[0];
-		}
-		if(vegetableMeatFishSidedish[1]!=null) {	
 			recept1.meatFish = vegetableMeatFishSidedish[1];
 		}
-		if(vegetableMeatFishSidedish[2]!=null) {
-		recept1.sideDish = vegetableMeatFishSidedish[2];
-		}
-		listRecipe.add(recept1);
-		Statement stmt= null;
-		String sqlstring1="INSERT INTO RECIPE(RECIPETITLE, VEGGIE, MEATFISH, SIDEDISH)";
-				String sqlstring2=("VALUES("+recept1.name+","+recept1.vegetables+","+recept1.meatFish+","+recept1.sideDish);
-		try {
-			stmt.executeUpdate(sqlstring1+sqlstring2);
-		} catch (SQLException e) {
+		if (vegetableMeatFishSidedish.length==2) {
 			
-			e.printStackTrace();
+			recept1.vegetables= vegetableMeatFishSidedish[0];
+			recept1.meatFish = vegetableMeatFishSidedish[1];
 		}
+		if (vegetableMeatFishSidedish.length==1) {
+			
+			recept1.vegetables= vegetableMeatFishSidedish[0];
+			
+		}else {
+			
+		}
+		
+		
+		
+		
+		
+		
+		
+		listRecipe.add(recept1);
+		//addRecipeToDb(recept1);
+		
+		
+		
 		
 		System.out.println("Bedankt, volgend recept is toegevoegd: " + 
 		recept1.name + " met "+ recept1.vegetables + " " + recept1.meatFish+" " + recept1.sideDish);
 		System.out.println();
+		
+	}
+
+	private static void addRecipeToDb(Recipe recept1) {
+		
+		String sqlstring1="INSERT INTO RECIPES(RECIPETITLE, VEGGIE, MEATFISH, SIDEDISH) VALUES(?,?,?,?)";
+				//String sqlstring2=("VALUES("+recept1.name+", "+recept1.vegetables+", "+recept1.meatFish+", "+recept1.sideDish);
+		try (
+			
+			PreparedStatement stmt= conn.prepareStatement(sqlstring1)){
+				stmt.setString(1, recept1.name);
+				stmt.setString(2, recept1.vegetables);
+				stmt.setString(3, recept1.meatFish);
+				stmt.setString(4, recept1.sideDish);
+				stmt.executeUpdate();
+			}
+			
+		 catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
 		
 	}
 }

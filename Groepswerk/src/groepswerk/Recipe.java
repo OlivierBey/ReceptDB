@@ -2,7 +2,9 @@ package groepswerk;
 
 public class Recipe {
 String name;
-String vegetables, meatFish, sideDish;
+String vegetables ="";
+String meatFish ="";
+String sideDish ="";
 
 public Recipe() {}
 
