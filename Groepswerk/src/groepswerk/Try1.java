@@ -8,9 +8,9 @@ import java.util.Scanner;
 public class Try1 {
 	static Scanner scanner = new Scanner(System.in);
 	static ArrayList<Recipe> listRecipe =new ArrayList<>();
-	static boolean conestablish= false;
-	static boolean isTableMt= false;
-    static Connection conn = null;
+	//static boolean conestablish= false;
+	//static boolean isTableMt= false;
+    //static Connection conn = null;
     static String url = "jdbc:sqlite:C:/Users/olivi/git/groepswerk1/Groepswerk/src/groepswerk/recipe.db";
 
 	
@@ -18,7 +18,7 @@ public class Try1 {
 		
 		
 
-	connect();
+	
 	createTable();
 	startCycle();
 
@@ -44,25 +44,26 @@ public class Try1 {
 	    }
 	
 
-	public static void connect() {
-	        try {
-	          
-	          conn = DriverManager.getConnection(url);
-	          System.out.println("Connection to SQLite has been established.");
-	          conestablish= true;
-	            
-	        } catch (SQLException e) {
-	            System.out.println(e.getMessage());
-	        } finally {
-	            try {
-	                if (conn != null) {
-	                    conn.close();
-	                }
-	            } catch (SQLException ex) {
-	                System.out.println(ex.getMessage());
-	            }
-	        }
-	    }	
+//	public Connection connect() {
+//	        try {
+//	          
+//	          conn = DriverManager.getConnection(url);
+//	          System.out.println("Connection to SQLite has been established.");
+//	          //conestablish= true;
+//	            
+//	        } catch (SQLException e) {
+//	            System.out.println(e.getMessage());
+//	        } finally {
+//	            try {
+//	                if (conn != null) {
+//	                    conn.close();
+//	                }
+//	            } catch (SQLException ex) {
+//	                System.out.println(ex.getMessage());
+//	            }
+//	        }
+//	        return conn;
+//	    }	
 	
 	
 	
@@ -71,6 +72,7 @@ public class Try1 {
 
 
 	private static void startCycle() {
+		listRecipe.removeAll(listRecipe);
 		System.out.println("---------------------------------------------------------");
 		System.out.println("  Welkom! Wilt U een recept toevoegen of zoeken? T of Z  ");
 		System.out.println("---------------------------------------------------------");
@@ -91,6 +93,7 @@ public class Try1 {
 	}
 
 	private static void searchRecipe() {
+		loadDbList();
 		System.out.println("Wilt u kiezen in de Lijst of zoeken op Ingredient? L of I");
 		String input = scanner.nextLine();
 		if(input.equalsIgnoreCase("L")){
@@ -104,20 +107,26 @@ public class Try1 {
 	private static void searchIngredient() {
 		System.out.println("Geeft een ingredient in : ");
 		String ingredient = scanner.nextLine();
-		ArrayList<String> result = new ArrayList<>();
-		
+		//ArrayList<String> result = new ArrayList<>();
+		System.out.println(listRecipe.size());
 		for (Recipe recipe : listRecipe) {
-			if(ingredient.equalsIgnoreCase(recipe.vegetables)){
-				result.add(recipe.name);}
-			else if(ingredient.equalsIgnoreCase(recipe.meatFish)){
-				result.add(recipe.name);}
-			else if(ingredient.equalsIgnoreCase(recipe.sideDish)){
-				result.add(recipe.name);}
+			System.out.println("a "+ingredient);
+			System.out.println("b "+recipe.name);
+			//System.out.println(recipe.vegetables);
+			if(ingredient.equalsIgnoreCase(recipe.vegetables) || ingredient.equalsIgnoreCase(recipe.meatFish) || ingredient.equalsIgnoreCase(recipe.sideDish))
+			{ System.out.println(recipe.name);
+			}
+			
+			//	result.add(recipe.name);}
+//			else if(ingredient.equalsIgnoreCase(recipe.meatFish)){
+//				result.add(recipe.name);}
+//			else if(ingredient.equalsIgnoreCase(recipe.sideDish)){
+//				result.add(recipe.name);}
 			else {NotFound();}
 		}
-	for (String string : result) {
-		System.out.println(string);
-	}
+//	for (String string : result) {
+//		System.out.println(string);
+//	}
 	ingredient= null;
 	}
 
@@ -128,13 +137,45 @@ public class Try1 {
 
 
 	private static void printList() {
+		
+		
 		for (Recipe recipe : listRecipe) {
-			System.out.println(recipe.name);
+			
+			System.out.println(recipe.name + " met ingredienten:"+ recipe.vegetables + " " + recipe.meatFish+" " + recipe.sideDish);
+			
 		}
+			
+		
 	}
 
 
 	
+	private static void loadDbList() {
+		String sqlstring="SELECT RecipeTitle, Veggie, MeatFish, SideDish FROM recipes";
+			
+		
+		try (Connection conn = DriverManager.getConnection(url);
+				
+				Statement stmt  = conn.createStatement();
+	             ResultSet rs    = stmt.executeQuery(sqlstring)){
+	            // loop through the result set
+	            while (rs.next()) {
+	            	Recipe recept = new Recipe();
+	            	recept.name=rs.getString("RecipeTitle");
+	            	
+	            	recept.meatFish= rs.getString("MeatFish");
+	            	recept.vegetables= rs.getString("Veggie");
+	            	recept.sideDish= rs.getString("sideDish");
+	            	listRecipe.add(recept);
+	            	
+	            }
+		}
+		catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+		
+	}
+
 	private static void addRecipe() {
 		System.out.println("Geef de naam van het recept in: ");
 		Recipe recept1 = new Recipe();
@@ -145,7 +186,7 @@ public class Try1 {
 		
 		String[] vegetableMeatFishSidedish= new String[3];
 		vegetableMeatFishSidedish= hulpString.split(" ");
-		System.out.println(vegetableMeatFishSidedish.length);
+		
 		if (vegetableMeatFishSidedish.length==3) {
 			recept1.sideDish = vegetableMeatFishSidedish[2];
 			recept1.vegetables= vegetableMeatFishSidedish[0];
@@ -155,23 +196,14 @@ public class Try1 {
 			
 			recept1.vegetables= vegetableMeatFishSidedish[0];
 			recept1.meatFish = vegetableMeatFishSidedish[1];
+			recept1.sideDish = " ";
 		}
 		if (vegetableMeatFishSidedish.length==1) {
-			
+			recept1.sideDish = " ";
 			recept1.vegetables= vegetableMeatFishSidedish[0];
-			
-		}else {
-			
-		}
-		
-		
-		
-		
-		
-		
-		
-		listRecipe.add(recept1);
-		//addRecipeToDb(recept1);
+			recept1.meatFish = " ";
+		}listRecipe.add(recept1);
+		addRecipeToDb(recept1);
 		
 		
 		
@@ -184,9 +216,10 @@ public class Try1 {
 
 	private static void addRecipeToDb(Recipe recept1) {
 		
-		String sqlstring1="INSERT INTO RECIPES(RECIPETITLE, VEGGIE, MEATFISH, SIDEDISH) VALUES(?,?,?,?)";
-				//String sqlstring2=("VALUES("+recept1.name+", "+recept1.vegetables+", "+recept1.meatFish+", "+recept1.sideDish);
-		try (
+		String sqlstring1="INSERT INTO recipes(RecipeTitle, Veggie, MeatFish, SideDish) VALUES(?,?,?,?)";
+			
+		
+		try (Connection conn = DriverManager.getConnection(url);
 			
 			PreparedStatement stmt= conn.prepareStatement(sqlstring1)){
 				stmt.setString(1, recept1.name);
@@ -194,6 +227,7 @@ public class Try1 {
 				stmt.setString(3, recept1.meatFish);
 				stmt.setString(4, recept1.sideDish);
 				stmt.executeUpdate();
+				System.out.println("updated");
 			}
 			
 		 catch (SQLException e) {
