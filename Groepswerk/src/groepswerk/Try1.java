@@ -3,26 +3,19 @@ package groepswerk;
 import java.sql.*;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Scanner;
 
 public class Try1 {
 	static Scanner scanner = new Scanner(System.in);
 	static ArrayList<Recipe> listRecipe =new ArrayList<>();
-	//static boolean conestablish= false;
-	//static boolean isTableMt= false;
-    //static Connection conn = null;
-    static String url = "jdbc:sqlite:C:/Users/olivi/git/groepswerk1/Groepswerk/src/groepswerk/recipe.db";
-
-	
+	static boolean foundRecipe = false;
+	static String url = "jdbc:sqlite:C:/Users/olivi/git/groepswerk1/Groepswerk/src/groepswerk/recipe.db";
+    	
 	public static void main(String[] args) throws SQLException {
 		
-		
-
-	
-	createTable();
-	startCycle();
-
-	
+		createTable();
+		startCycle();
 	}
 	
 	 private static void createTable() throws SQLException {
@@ -36,41 +29,12 @@ public class Try1 {
 		 
 		 try (Connection conn = DriverManager.getConnection(url);
 	                Statement stmt = conn.createStatement()) {
-	            // create a new table
 	            stmt.execute(sql);
 	        } catch (SQLException e) {
 	            System.out.println(e.getMessage());
 	        }
 	    }
 	
-
-//	public Connection connect() {
-//	        try {
-//	          
-//	          conn = DriverManager.getConnection(url);
-//	          System.out.println("Connection to SQLite has been established.");
-//	          //conestablish= true;
-//	            
-//	        } catch (SQLException e) {
-//	            System.out.println(e.getMessage());
-//	        } finally {
-//	            try {
-//	                if (conn != null) {
-//	                    conn.close();
-//	                }
-//	            } catch (SQLException ex) {
-//	                System.out.println(ex.getMessage());
-//	            }
-//	        }
-//	        return conn;
-//	    }	
-	
-	
-	
-	
-	
-
-
 	private static void startCycle() {
 		listRecipe.removeAll(listRecipe);
 		System.out.println("---------------------------------------------------------");
@@ -83,9 +47,7 @@ public class Try1 {
 			searchRecipe();}
 			else {
 				NotFound();}
-		startCycle();
 	}
-
 
 	private static void NotFound() {
 		System.out.println("Uw zoekactie heeft geen resultaten, probeer opnieuw");
@@ -105,60 +67,41 @@ public class Try1 {
 	}
 
 	private static void searchIngredient() {
+		Boolean foundRecipe = false;
 		System.out.println("Geeft een ingredient in : ");
 		String ingredient = scanner.nextLine();
-		//ArrayList<String> result = new ArrayList<>();
-		System.out.println(listRecipe.size());
+		
 		for (Recipe recipe : listRecipe) {
-			System.out.println("a "+ingredient);
-			System.out.println("b "+recipe.name);
-			//System.out.println(recipe.vegetables);
-			if(ingredient.equalsIgnoreCase(recipe.vegetables) || ingredient.equalsIgnoreCase(recipe.meatFish) || ingredient.equalsIgnoreCase(recipe.sideDish))
-			{ System.out.println(recipe.name);
+			
+			if(ingredient.equalsIgnoreCase(recipe.vegetables) || 
+					ingredient.equalsIgnoreCase(recipe.meatFish) || 
+					ingredient.equalsIgnoreCase(recipe.sideDish)) {
+			 System.out.println(recipe.name);
+			 foundRecipe= true;
 			}
 			
-			//	result.add(recipe.name);}
-//			else if(ingredient.equalsIgnoreCase(recipe.meatFish)){
-//				result.add(recipe.name);}
-//			else if(ingredient.equalsIgnoreCase(recipe.sideDish)){
-//				result.add(recipe.name);}
-			else {NotFound();}
 		}
-//	for (String string : result) {
-//		System.out.println(string);
-//	}
-	ingredient= null;
+		if(foundRecipe== false) {
+			NotFound();
+		}
 	}
-
-
-
-
-
-
 
 	private static void printList() {
 		
-		
 		for (Recipe recipe : listRecipe) {
-			
-			System.out.println(recipe.name + " met ingredienten:"+ recipe.vegetables + " " + recipe.meatFish+" " + recipe.sideDish);
-			
+			System.out.println(recipe.name + "\t"+" met ingredienten: "+ recipe.vegetables + " " + recipe.meatFish+" " + recipe.sideDish);
 		}
-			
-		
+		startCycle();
 	}
 
-
-	
 	private static void loadDbList() {
 		String sqlstring="SELECT RecipeTitle, Veggie, MeatFish, SideDish FROM recipes";
 			
-		
 		try (Connection conn = DriverManager.getConnection(url);
 				
 				Statement stmt  = conn.createStatement();
 	             ResultSet rs    = stmt.executeQuery(sqlstring)){
-	            // loop through the result set
+	            
 	            while (rs.next()) {
 	            	Recipe recept = new Recipe();
 	            	recept.name=rs.getString("RecipeTitle");
@@ -167,23 +110,25 @@ public class Try1 {
 	            	recept.vegetables= rs.getString("Veggie");
 	            	recept.sideDish= rs.getString("sideDish");
 	            	listRecipe.add(recept);
-	            	
 	            }
 		}
 		catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-		
 	}
 
 	private static void addRecipe() {
 		System.out.println("Geef de naam van het recept in: ");
 		Recipe recept1 = new Recipe();
 		String hulpString = scanner.nextLine();
+		if (hulpString.length()<25) {
+			for (int i = hulpString.length(); i < 25; i++) {
+				hulpString= hulpString+" ";
+			}
+		}
 		recept1.name = hulpString;
 		System.out.println("Welke ingredienten? (groenten vlees/vis bijgerecht)");
 		hulpString = scanner.nextLine();
-		
 		String[] vegetableMeatFishSidedish= new String[3];
 		vegetableMeatFishSidedish= hulpString.split(" ");
 		
@@ -205,20 +150,14 @@ public class Try1 {
 		}listRecipe.add(recept1);
 		addRecipeToDb(recept1);
 		
-		
-		
-		
 		System.out.println("Bedankt, volgend recept is toegevoegd: " + 
 		recept1.name + " met "+ recept1.vegetables + " " + recept1.meatFish+" " + recept1.sideDish);
 		System.out.println();
-		
+		startCycle();
 	}
 
 	private static void addRecipeToDb(Recipe recept1) {
-		
 		String sqlstring1="INSERT INTO recipes(RecipeTitle, Veggie, MeatFish, SideDish) VALUES(?,?,?,?)";
-			
-		
 		try (Connection conn = DriverManager.getConnection(url);
 			
 			PreparedStatement stmt= conn.prepareStatement(sqlstring1)){
@@ -227,7 +166,7 @@ public class Try1 {
 				stmt.setString(3, recept1.meatFish);
 				stmt.setString(4, recept1.sideDish);
 				stmt.executeUpdate();
-				System.out.println("updated");
+				System.out.println("***Database updated***");
 			}
 			
 		 catch (SQLException e) {
