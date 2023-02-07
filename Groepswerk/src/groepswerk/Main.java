@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Scanner;
 
-public class Try1 {
+public class Main {
 	static Scanner scanner = new Scanner(System.in);
 	static ArrayList<Recipe> listRecipe =new ArrayList<>();
 	static boolean foundRecipe = false;
